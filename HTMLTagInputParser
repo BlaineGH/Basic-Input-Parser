@@ -6,7 +6,8 @@
 #include <string>
 #include <unordered_map>
 #include <list>
-using std::cout, std::cin, std::endl, std::string, std::vector, std::isalpha, std::isdigit, std::isspace, std::list, std::unordered_map, std::pair;
+
+using std::cout, std::cin, std::endl, std::string, std::vector, std::isalpha, std::isdigit, std::isspace, std::unordered_map, std::pair;
 
 
 int InputValidCheck(){
@@ -37,55 +38,59 @@ int SetTagAmount(){
     return N;
 }
 
-void SetUserInputTags(const int& numberOfTags, unordered_map<string, list<unordered_map<string, string>>>* tagMap){
-    for(int i = 0; i <= numberOfTags; i++){
-        int attrCount;
-        int quoteMarkCount;
-        //list<unordered_map<string, string>> listOfAttrsValues;
-        //unordered_map<string, string> 
-        string userInputTag;
-        string userInputTagName;
-        string userInputTagAttr;
-        string userInputTagAttrValue;
-        vector<char> userInputTagVec;
-
-        attrCount = 0;
-        quoteMarkCount = 0;
-        getline(cin, userInputTag); //cin
-        for(char value : userInputTag){ //Start Parse into vector
-            //cout<<"tagInput: "<<value<<endl;
+void SetUserInputTags(const int& numberOfTags, unordered_map<string, unordered_map<string, string>>& tagMap){
+    for(int i = 0; i < numberOfTags; i++){
+        string inputTag;
+        getline(cin, inputTag); //cin
+        int quoteMarkCount = 0;
+        int attrCount = 0;
+        bool bTagNameCreated = false;
+        bool bTagAttrCreated = false;
+        string inputTagName;
+        string inputTagAttr;
+        string inputTagAttrValue;
+        unordered_map<string, string> attrValueMap;
+        vector<char> inputTagVec;
+        for(char value : inputTag){ //Start Parse into vector
             if (isalpha(value) || isdigit(value)){
-                userInputTagVec.push_back(value);
+                inputTagVec.push_back(value);
             }
-            if(isspace(value) || value == '='){
-                if(attrCount == 0 && value != '='){
-                   userInputTagName = string(userInputTagVec.begin(), userInputTagVec.end());
-                   //cout<<"tagName: "<<userInputTagName<<endl;
-                }
-                if(attrCount == 1){
-                    userInputTagAttr = string(userInputTagVec.begin(), userInputTagVec.end());
-                    //cout<<"tagVar: "<<userInputTagVar<<endl;
-                }
-                attrCount++;
-                userInputTagVec.clear();
+            if(isspace(value) && attrCount < 2){
+                attrCount++; 
             }
-            if (value == '"' && attrCount >= 1){
+            if (value == '=' && attrCount < 2) {
+                attrCount++; 
+            }
+            if(bTagNameCreated == true && bTagAttrCreated == false && attrCount >= 2 && quoteMarkCount == 0){
+                inputTagAttr = string(inputTagVec.begin(), inputTagVec.end());
+                bTagAttrCreated = true;
+                inputTagVec.clear();
+            }
+            if(attrCount == 1 && bTagNameCreated == false){
+                inputTagName = string(inputTagVec.begin(), inputTagVec.end());
+                bTagNameCreated = true;
+                inputTagVec.clear();
+            }
+            if (value == '"'){
                 ++quoteMarkCount;
-                if (quoteMarkCount == 2) {
-                    userInputTagAttrValue = string(userInputTagVec.begin(), userInputTagVec.end());
-                    //cout<<"tagVarValue: "<<userInputTagVarValue<<endl;
-                    userInputTagNameAttrs.push_back(insert((pair<string, string>(userInputTagAttr,userInputTagAttrValue))));
-                    userInputTagVec.clear();
-                    quoteMarkCount = 0;
-                    attrCount = 1; //In case there is more than a single attribute.
-                }
+            }
+            if(quoteMarkCount == 2 && value == '"'){
+                inputTagAttrValue = string(inputTagVec.begin(), inputTagVec.end());
+                attrValueMap.insert(pair<string, string>(inputTagAttr,inputTagAttrValue));
+                tagMap.insert(pair<string, unordered_map<string, string>>(inputTagName,attrValueMap));
+                inputTagVec.clear();
+                quoteMarkCount = 0;
+                attrCount = 2;
             } 
             if (value == '>'){ //End of Tag.
-                userInputTagVec.clear();
+                inputTagVec.clear();
             } 
+            if (value == '/'){ //End tags.
+                inputTagVec.clear();
+                break;
+            }
         }
-        tagMap=>insert(pair<string, list<string>>(userInputTagName, ))
-    }
+    } 
 }
 
 void SetUserInputQueries(const int& numberOfQueries){
@@ -97,13 +102,17 @@ void SetUserInputQueries(const int& numberOfQueries){
 int main() {
     int Q;
     int N;
-    unordered_map<string, list<unordered_map<string, string>>> tagMap;
+    unordered_map<string, unordered_map<string, string>> tagMap;
     N = SetTagAmount();
     Q = SetQueryAmount();
-    SetUserInputTags(N, &tagMap);
+    SetUserInputTags(N, tagMap);
+    for(auto const &[outer_key, inner_map] : tagMap) {
+        cout<<"Outer Key: "<<outer_key<<", ";
+        for(auto const &[inner_key, inner_value] : inner_map) {
+            cout<<"Inner Key: "<<inner_key<<", "<<"Inner Value: "<<inner_value;
+        }
+        cout<<endl;
+    }
     SetUserInputQueries(Q);
-
-    
-    /* Enter your code here. Read input from STDIN. Print output to STDOUT */   
     return 0;
 }
