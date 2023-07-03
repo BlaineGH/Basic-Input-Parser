@@ -1,0 +1,109 @@
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <unordered_map>
+#include <list>
+using std::cout, std::cin, std::endl, std::string, std::vector, std::isalpha, std::isdigit, std::isspace, std::list, std::unordered_map, std::pair;
+
+
+int InputValidCheck(){
+    int input;
+    int count; // Prevent infite loop.
+    while(count <= 30){
+        cin>>input;
+        if ( input <= 20 && input >= 1) {
+            return input;
+        }
+        count++;
+        cout<<"Invalid entry. Please try again."<<endl;
+    }
+    return 0;
+}
+
+int SetQueryAmount(){
+    int Q;
+    //cout<<"How many time will you need to parse the data?"<<endl;
+    Q = InputValidCheck();
+    return Q;
+}
+
+int SetTagAmount(){
+    int N;
+    //cout<<"How many lines are you needing to be parsed? Enter a number between 1 - 20"<<endl;
+    N = InputValidCheck();
+    return N;
+}
+
+void SetUserInputTags(const int& numberOfTags, unordered_map<string, list<unordered_map<string, string>>>* tagMap){
+    for(int i = 0; i <= numberOfTags; i++){
+        int attrCount;
+        int quoteMarkCount;
+        //list<unordered_map<string, string>> listOfAttrsValues;
+        //unordered_map<string, string> 
+        string userInputTag;
+        string userInputTagName;
+        string userInputTagAttr;
+        string userInputTagAttrValue;
+        vector<char> userInputTagVec;
+
+        attrCount = 0;
+        quoteMarkCount = 0;
+        getline(cin, userInputTag); //cin
+        for(char value : userInputTag){ //Start Parse into vector
+            //cout<<"tagInput: "<<value<<endl;
+            if (isalpha(value) || isdigit(value)){
+                userInputTagVec.push_back(value);
+            }
+            if(isspace(value) || value == '='){
+                if(attrCount == 0 && value != '='){
+                   userInputTagName = string(userInputTagVec.begin(), userInputTagVec.end());
+                   //cout<<"tagName: "<<userInputTagName<<endl;
+                }
+                if(attrCount == 1){
+                    userInputTagAttr = string(userInputTagVec.begin(), userInputTagVec.end());
+                    //cout<<"tagVar: "<<userInputTagVar<<endl;
+                }
+                attrCount++;
+                userInputTagVec.clear();
+            }
+            if (value == '"' && attrCount >= 1){
+                ++quoteMarkCount;
+                if (quoteMarkCount == 2) {
+                    userInputTagAttrValue = string(userInputTagVec.begin(), userInputTagVec.end());
+                    //cout<<"tagVarValue: "<<userInputTagVarValue<<endl;
+                    userInputTagNameAttrs.push_back(insert((pair<string, string>(userInputTagAttr,userInputTagAttrValue))));
+                    userInputTagVec.clear();
+                    quoteMarkCount = 0;
+                    attrCount = 1; //In case there is more than a single attribute.
+                }
+            } 
+            if (value == '>'){ //End of Tag.
+                userInputTagVec.clear();
+            } 
+        }
+        tagMap=>insert(pair<string, list<string>>(userInputTagName, ))
+    }
+}
+
+void SetUserInputQueries(const int& numberOfQueries){
+    for(int i = 0; i < numberOfQueries; i++){
+        cout<<"InputQueries: "<<numberOfQueries<<endl;
+    }
+}
+
+int main() {
+    int Q;
+    int N;
+    unordered_map<string, list<unordered_map<string, string>>> tagMap;
+    N = SetTagAmount();
+    Q = SetQueryAmount();
+    SetUserInputTags(N, &tagMap);
+    SetUserInputQueries(Q);
+
+    
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */   
+    return 0;
+}
