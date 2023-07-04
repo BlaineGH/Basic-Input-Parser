@@ -38,12 +38,12 @@ int SetTagAmount(){
     return N;
 }
 
-void SetUserInputTags(const int& numberOfTags, unordered_map<string, unordered_map<string, string>>& tagMap){
-    for(int i = 0; i < numberOfTags; i++){
+void SetUserInputTags(const size_t& numberOfTags, unordered_map<string, unordered_map<string, string>>& tagMap){
+    for(size_t i = 0; i < numberOfTags; i++){
         string inputTag;
         getline(cin, inputTag); //cin
-        int quoteMarkCount = 0;
-        int attrCount = 0;
+        size_t quoteMarkCount = 0;
+        size_t attrCount = 0;
         bool bTagNameCreated = false;
         bool bTagAttrCreated = false;
         string inputTagName;
@@ -61,7 +61,7 @@ void SetUserInputTags(const int& numberOfTags, unordered_map<string, unordered_m
             if (value == '=' && attrCount < 2) {
                 attrCount++; 
             }
-            if(bTagNameCreated == true && bTagAttrCreated == false && attrCount >= 2 && quoteMarkCount == 0){
+            if(bTagNameCreated == true && bTagAttrCreated == false && value == '='){
                 inputTagAttr = string(inputTagVec.begin(), inputTagVec.end());
                 bTagAttrCreated = true;
                 inputTagVec.clear();
@@ -93,15 +93,15 @@ void SetUserInputTags(const int& numberOfTags, unordered_map<string, unordered_m
     } 
 }
 
-void SetUserInputQueries(const int& numberOfQueries){
+void SetUserInputQueries(const size_t& numberOfQueries){
     for(int i = 0; i < numberOfQueries; i++){
         cout<<"InputQueries: "<<numberOfQueries<<endl;
     }
 }
 
 int main() {
-    int Q;
-    int N;
+    size_t Q;
+    size_t N;
     unordered_map<string, unordered_map<string, string>> tagMap;
     N = SetTagAmount();
     Q = SetQueryAmount();
